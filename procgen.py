@@ -11,7 +11,7 @@ import tile_types
 
 
 if TYPE_CHECKING:
-    from entity import Entity
+    from engine import Engine
 
 
 class RectangularRoom:
@@ -65,7 +65,7 @@ def tunnel_between(
     """Return an L-shaped tunnel between these two points."""
     x1, y1 = start
     x2, y2 = end
-    if random.random() < 0.5:
+    if random.random() < 0.5:  # 50% chance.
         # Move horizontally, then vertically.
         corner_x, corner_y = x2, y1
     else:
@@ -86,10 +86,11 @@ def generate_dungeon(
     map_width: int,
     map_height: int,
     max_monsters_per_room: int,
-    player: Entity,
+    engine: Engine,
 ) -> GameMap:
     """Generate a new dungeon map."""
-    dungeon = GameMap(map_width, map_height, entities=[player])
+    player = engine.player
+    dungeon = GameMap(engine, map_width, map_height, entities=[player])
 
     rooms: List[RectangularRoom] = []
 
@@ -100,6 +101,7 @@ def generate_dungeon(
         x = random.randint(0, dungeon.width - room_width - 1)
         y = random.randint(0, dungeon.height - room_height - 1)
 
+        # "RectangularRoom" class makes rectangles easier to work with
         new_room = RectangularRoom(x, y, room_width, room_height)
 
         # Run through the other rooms and see if they intersect with this one.
@@ -112,7 +114,7 @@ def generate_dungeon(
 
         if len(rooms) == 0:
             # The first room, where the player starts.
-            player.x, player.y = new_room.center
+            player.place(*new_room.center, dungeon)
         else:  # All rooms after the first.
             # Dig out a tunnel between this room and the previous one.
             for x, y in tunnel_between(rooms[-1].center, new_room.center):
