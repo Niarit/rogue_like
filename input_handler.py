@@ -108,6 +108,9 @@ class GameOverEventHandler(EventHandler):
 
         key = event.sym
 
+        if key == tcod.event.K_v:
+            self.engine.event_handler = HistoryViewer(self.engine)
+
         if key == tcod.event.K_ESCAPE:
             action = EscapeAction(self.engine.player)
 
