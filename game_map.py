@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 
-import numpy as np 
+import numpy as np
 from tcod.console import Console
 
-from entity import Actor
+from entity import Actor, Item
 import tile_types
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 class GameMap:
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+            self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height
@@ -42,14 +42,18 @@ class GameMap:
             if isinstance(entity, Actor) and entity.is_alive
         )
 
+    @property
+    def items(self) -> Iterator[Item]:
+        yield from (entity for entity in self.entities if isinstance(entity, Item))
+
     def get_blocking_entity_at_location(
-        self, location_x: int, location_y: int,
+            self, location_x: int, location_y: int,
     ) -> Optional[Entity]:
         for entity in self.entities:
             if (
-                entity.blocks_movement
-                and entity.x == location_x
-                and entity.y == location_y
+                    entity.blocks_movement
+                    and entity.x == location_x
+                    and entity.y == location_y
             ):
                 return entity
 
@@ -73,7 +77,7 @@ class GameMap:
         If it isn't, but it's in the "explored" array, then draw it with the "dark" colors.
         Otherwise, the default is "SHROUD".
         """
-        console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
+        console.tiles_rgb[0: self.width, 0: self.height] = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.tiles["light"], self.tiles["dark"]],
             default=tile_types.SHROUD,
