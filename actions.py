@@ -28,6 +28,7 @@ class Action:
         """
         raise NotImplementedError()
 
+
 class ItemAction(Action):
     def __init__(
             self, entity: Actor, item: Item, target_xy: Optional[Tuple[int, int]] = None
@@ -49,9 +50,10 @@ class ItemAction(Action):
         """Invoke the items ability, this action will be given to provide context."""
         self.item.consumable.activate(self)
 
-class EscapeAction(Action):
+
+class DropAction(ItemAction):
     def perform(self) -> None:
-        raise SystemExit()
+        self.entity.inventory.drop(self.item)
 
 
 class WaitAction(Action):
