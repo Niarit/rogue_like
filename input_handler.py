@@ -365,6 +365,7 @@ class LookHandler(SelectIndexHandler):
         """Return the main handler"""
         self.engine.event_handler = MainGameEventHandler(self.engine)
 
+
 class SingleRangedAttackHandler(SelectIndexHandler):
     """Handles targeting a single enemy. Only the selected enemy will be affected"""
 
@@ -373,6 +374,39 @@ class SingleRangedAttackHandler(SelectIndexHandler):
     ):
         super().__init__(engine)
         self.callback = callback
+
+    def on_index_selected(self, x: int, y: int) -> Optional[Action]:
+        return self.callback((x, y))
+
+
+class AreaRangedAttackHandler(SelectIndexHandler):
+    """Handles selecting an area within a given radius. All entities in the area will be effected"""
+
+    def __init__(
+            self,
+            engine: Engine,
+            radius: int,
+            callback: Callable[[Tuple[int, int]], Optional[Action]],
+    ):
+        super().__init__(engine)
+        self.radius = radius
+        self.callback = callback
+
+    def on_render(self, console: tcod.Console) -> None:
+        """Highlights the tile under the cursor"""
+        super().on_render(console)
+        x, y = self.engine.mouse_location
+
+        # Draw a rectangle around the area for better visibility
+
+        console.draw_frame(
+            x=x - self.radius - 1,
+            y=y - self.radius - 1,
+            width=self.radius ** 2,
+            height=self.radius ** 2,
+            fg=color.red,
+            clear=False,
+        )
 
     def on_index_selected(self, x: int, y: int) -> Optional[Action]:
         return self.callback((x, y))
