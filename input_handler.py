@@ -173,6 +173,8 @@ class MainGameEventHandler(EventHandler):
             return InventoryDropHandler(self.engine)
         elif key == tcod.event.K_l:
             return LookHandler(self.engine)
+        elif key == tcod.event.K_y:
+            return actions.TakeStairsAction(player)
 
         # No valid key was pressed
         return action
