@@ -161,3 +161,17 @@ class PickupAction(Action):
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
                 return
         raise exceptions.Impossible("There is nothing here to pick up.")
+
+
+class TakeStairsAction(Action):
+    def perform(self) -> None:
+        """
+        Take the stairs if there is any.
+        """
+        if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
+            self.engine.game_world.generate_floor()
+            self.engine.message_log.add_message(
+                "You descend the stairs", color.descend
+            )
+        else:
+            raise exceptions.Impossible("There are no stairs here to use!")
