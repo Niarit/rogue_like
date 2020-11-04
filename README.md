@@ -1,6 +1,6 @@
 # Cradle of Ain: A Rogue Like Game
 
-## Prerequisites
+## Prequisites
 
 To run this game you need the following:
 
@@ -23,28 +23,48 @@ your IDE should be able to run the code fine via pressing the "Run" button.
 - Random generated maps
 
 
+![map_type1](/project_pictures/different_map.png)
+
+
 - Multiple levels accessable via stairs
 
+
+![map_type2](/project_pictures/maps_and_stairs.png)
 
 
 - Two types of enemies (orks and trolls)
 
 
+  - Orks
+  - Trolls
 
-- Multiple consumeables (potions and scrolls)
 
+- Multiple consumeables
+
+
+  - Health potion
+  - Confusion scroll
+  - Ligthening scroll
+  - Fire ball scroll
 
 
 - Multiple types of equiplments
 
-
+  - Dagger
+  - Sword
+  - Chain mail
+  - Leather armor
 
 - Saving and Loading
 
+![main_menu](/project_pictures/main_menu.png)
 
 
 - Leveling and gearing
 
+![character_sheet](/project_pictures/character_tab.png)
+![level_ip_tab](/project_pictures/level_up_tab.png)
+![inventory](/project_pictures/items_and_inventory.png)
 
 ## How to play
 ### Key bindings
