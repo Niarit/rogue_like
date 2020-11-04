@@ -1,31 +1,29 @@
+import traceback
+
 import tcod
 
-from engine import Engine
-from input_handler import EventHandler
-from entity import Entity
-from game_map import GameMap
+import color
+import exceptions
+import input_handler
+import setup_game
+
+
+def save_game(handler: input_handler.BaseEventHandler, filename: str) -> None:
+    """If the current event handler has an active Engine then save it."""
+    if isinstance(handler, input_handler.EventHandler):
+        handler.engine.save_as(filename)
+        print("Game saved.")
 
 
 def main() -> None:
     screen_width = 80
     screen_height = 50
 
-    map_width = 80
-    map_height = 45
-
     tileset = tcod.tileset.load_tilesheet(
         "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
     )
 
-    event_handler = EventHandler()
-
-    player = Entity(int(screen_width/2), int(screen_height/2), "@", (255, 255, 255))
-    npc = Entity(int(screen_width/2 - 5), int(screen_height/2), "@", (255, 255, 0))
-    entities = {npc, player}
-
-    game_map = GameMap(map_width, map_height)
-
-    engine = Engine(entities=entities, event_handler=event_handler, game_map=game_map, player=player)
+    handler: input_handler.BaseEventHandler = setup_game.MainMenu()
 
     with tcod.context.new_terminal(
             screen_width,
@@ -35,11 +33,30 @@ def main() -> None:
             vsync=True,
     ) as context:
         root_console = tcod.Console(screen_width, screen_height, order="F")
+        try:
+            while True:
+                root_console.clear()
+                handler.on_render(console=root_console)
+                context.present(root_console)
 
-        while True:
-            engine.render(console=root_console, context=context)
-            events = tcod.event.wait()
-            engine.handle_event(events)
+                try:
+                    for event in tcod.event.wait():
+                        context.convert_event(event)
+                        handler = handler.handle_events(event)
+                except Exception:
+                    traceback.print_exc()
+                    if isinstance(handler, input_handler.EventHandler):
+                        handler.engine.message_log.add_message(
+                            traceback.format_exc(), color.error
+                        )
+        except exceptions.QuitWithoutSaving:
+            raise
+        except SystemExit:
+            save_game(handler, "saved_game.sav")
+            raise
+        except BaseException:
+            save_game(handler, "saved_game.sav")
+            raise
 
 
 if __name__ == "__main__":
