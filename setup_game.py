@@ -46,6 +46,18 @@ def new_game() -> Engine:
     engine.message_log.add_message(
         "Hello and welcome, adventurer, to yet another dungeon!", color.welcome_text
     )
+    stick = copy.deepcopy(entity_factories.stick)
+    leather_armor = copy.deepcopy(entity_factories.leather_armor)
+
+    stick.parent = player.inventory
+    leather_armor.parent = player.inventory
+
+    player.inventory.items.append(stick)
+    player.equipment.toggle_equip(stick, add_message=False)
+
+    player.inventory.items.append(leather_armor)
+    player.equipment.toggle_equip(leather_armor, add_message=False)
+
     return engine
 
 
