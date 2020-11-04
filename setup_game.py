@@ -79,7 +79,7 @@ class MainMenu(input_handler.BaseEventHandler):
         console.print(
             console.width // 2,
             console.height // 2 - 4,
-            "CATACOMBS OF THE LOST ONES",
+            "CRADLE OF AIN",
             fg=color.menu_title,
             alignment=tcod.CENTER,
         )
