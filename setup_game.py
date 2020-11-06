@@ -19,6 +19,62 @@ from game_map import GameWorld
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
 
 
+class HowToPlay(input_handler.BaseEventHandler):
+    def on_render(self, console: tcod.Console) -> None:
+
+        console.print(
+            console.width // 2,
+            console.height // 2 - 10,
+            "HOW TO PLAY",
+            fg=color.menu_title,
+            alignment=tcod.CENTER,
+        )
+
+        menu_width = console.width // 4
+
+        for i, text in enumerate(
+                ["UP ARROW........move up",
+                 "\n",
+                 "DOWN ARROW......move down",
+                 "\n",
+                 "RIGHT ARROW.....move right",
+                 "\n",
+                 "LEFT ARROW......move left",
+                 "\n",
+                 "ESCAPE..........exit game",
+                 "\n",
+                 "KEY V...............open history",
+                 "\n",
+                 "KEY G...............pick up item",
+                 "\n",
+                 "KEY D...............drop item",
+                 "\n",
+                 "KEY I...............open inventory",
+                 "\n",
+                 "KEY C...............open character tab",
+                 "\n",
+                 "KEY L...............toggle look around",
+                 "\n",
+                 "KEY Y...............use stairs"]
+        ):
+            console.print(
+                console.width // 2,
+                console.height // 2 - 2 + i,
+                text.ljust(menu_width),
+                fg=color.menu_text,
+                bg=color.black,
+                alignment=tcod.CENTER,
+                bg_blend=tcod.BKGND_ALPHA(64),
+            )
+
+    def ev_keydown(
+            self, event: tcod.event.KeyDown
+    ) -> Optional[input_handler.BaseEventHandler]:
+        if event.sym in (tcod.event.K_q, tcod.event.K_ESCAPE):
+            return MainMenu()
+        return None
+
+
 def new_game() -> Engine:
     """Return a brand new game session as an Engine instance."""
     map_width = 80
@@ -93,7 +149,7 @@ class MainMenu(input_handler.BaseEventHandler):
 
         menu_width = 24
         for i, text in enumerate(
-                ["[N] Play a new game", "[C] Continue last game", "[Q] Quit"]
+                ["[N] Play a new game", "[C] Continue last game", "[H] How to play", "[Q] Quit"]
         ):
             console.print(
                 console.width // 2,
@@ -120,5 +176,7 @@ class MainMenu(input_handler.BaseEventHandler):
                 return input_handler.PopupMessage(self, f"Failed to load save:\n{exc}")
         elif event.sym == tcod.event.K_n:
             return input_handler.MainGameEventHandler(new_game())
+        elif event.sym == tcod.event.K_h:
+            return HowToPlay()
 
         return None
