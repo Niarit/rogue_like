@@ -45,6 +45,9 @@ class BaseAI(Action):
 
         return [(index[0], index[1]) for index in path]
 
+    def get_ai_name(self) -> str:
+        raise NotImplementedError
+
 
 class HostileEnemy(BaseAI):
     def __init__(self, entity: Actor):
@@ -68,11 +71,16 @@ class HostileEnemy(BaseAI):
 
             return WaitAction(self.entity).perform()
 
+    def get_ai_name(self) -> str:
+        return "Hostile ai"
+
+
 class ConfusedEnemy(BaseAI):
     """
     Confused enemy will stumble around for a few given rounds, then changes back to its usual AI.
     When a confused enemy stumbles into a tile where someone is standing, it will attack
     """
+
     def __init__(
             self, entity: Actor, previous_ai: Optional[BaseAI], turns_remaining: int
     ):
@@ -104,3 +112,6 @@ class ConfusedEnemy(BaseAI):
             self.turns_remaining -= 1
 
             return BumpAction(self.entity, direction_x, direction_y).perform()
+
+    def get_ai_name(self) -> str:
+        return "Confused ai"

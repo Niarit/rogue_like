@@ -4,6 +4,7 @@ from typing import Optional, Tuple, TYPE_CHECKING
 
 import color
 import exceptions
+import pygame.mixer as play_music
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -14,6 +15,7 @@ class Action:
     def __init__(self, entity: Actor) -> None:
         super().__init__()
         self.entity = entity
+        play_music.init()
 
     @property
     def engine(self) -> Engine:
@@ -54,7 +56,6 @@ class ItemAction(Action):
 
 class DropAction(ItemAction):
     def perform(self) -> None:
-
         if self.entity.equipment.item_is_equipped(self.item):
             self.entity.equipment.toggle_equip(self.item)
 
@@ -140,6 +141,12 @@ class MovementAction(ActionWithDirection):
         if self.engine.game_map.get_blocking_entity_at_location(dest_x, dest_y):
             # Destination is blocked by an entity.
             raise exceptions.Impossible("That way is blocked.")
+
+        if self.entity.ai.get_ai_name() == "Hostile ai":
+
+            play_music.music.load("music/step.wav")
+            play_music.music.set_volume(0.1)
+            play_music.music.play()
 
         self.entity.move(self.dx, self.dy)
 
