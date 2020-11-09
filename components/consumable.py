@@ -59,7 +59,8 @@ class ConfusionConsumable(Consumable):
         if not target:
             raise Impossible("You must select an enemy to target.")
         if target is consumer:
-            raise Impossible("You cannot confuse yourself!")
+            self.consume()
+            raise Impossible("You tried but you cannot confuse yourself!")
 
         play_music.music.load("music/huh.wav")
         play_music.music.set_volume(0.05)
