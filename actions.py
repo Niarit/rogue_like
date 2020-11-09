@@ -59,6 +59,10 @@ class DropAction(ItemAction):
         if self.entity.equipment.item_is_equipped(self.item):
             self.entity.equipment.toggle_equip(self.item)
 
+        play_music.music.load("music/drop.wav")
+        play_music.music.set_volume(0.1)
+        play_music.music.play()
+
         self.entity.inventory.drop(self.item)
 
 
@@ -69,6 +73,11 @@ class EquipAction(Action):
         self.item = item
 
     def perform(self) -> None:
+
+        play_music.music.load("music/equip.wav")
+        play_music.music.set_volume(0.1)
+        play_music.music.play()
+
         self.entity.equipment.toggle_equip(self.item)
 
 
@@ -178,6 +187,11 @@ class PickupAction(Action):
 
                 self.engine.game_map.entities.remove(item)
                 item.parent = self.entity.inventory
+
+                play_music.music.load("music/pick_up.wav")
+                play_music.music.set_volume(0.1)
+                play_music.music.play()
+
                 inventory.items.append(item)
 
                 self.engine.message_log.add_message(f"You picked up the {item.name}!")
@@ -192,6 +206,11 @@ class TakeStairsAction(Action):
         """
         if (self.entity.x, self.entity.y) == self.engine.game_map.downstairs_location:
             self.engine.game_world.generate_floor()
+
+            play_music.music.load("music/stair.wav")
+            play_music.music.set_volume(0.1)
+            play_music.music.play()
+
             self.engine.message_log.add_message(
                 "You descend the stairs", color.descend
             )
