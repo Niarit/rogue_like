@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
-
+import pygame.mixer as play_music
 import actions
 import color
 import components.ai
@@ -30,6 +30,7 @@ class Consumable(BaseComponent):
 
     def consume(self) -> None:
         """Remove the consumed item from its containing inventory."""
+
         entity = self.parent
         inventory = entity.parent
         if isinstance(inventory, components.inventory.Inventory):
@@ -58,7 +59,12 @@ class ConfusionConsumable(Consumable):
         if not target:
             raise Impossible("You must select an enemy to target.")
         if target is consumer:
-            raise Impossible("You cannot confuse yourself!")
+            self.consume()
+            raise Impossible("You tried but you cannot confuse yourself!")
+
+        play_music.music.load("music/huh.wav")
+        play_music.music.set_volume(0.05)
+        play_music.music.play()
 
         self.engine.message_log.add_message(
             f"The eyes of the {target.name} look vacant, as it starts to stumble around!",
@@ -83,6 +89,10 @@ class HealingConsumable(Consumable):
                 f"You consume the {self.parent.name}, and recover {amount_recovered} HP!",
                 color.health_recovered,
             )
+            play_music.init()
+            play_music.music.load("music/drink.wav")
+            play_music.music.set_volume(0.1)
+            play_music.music.play()
             self.consume()
         else:
             raise Impossible(f"Your health is already full.")
@@ -107,10 +117,17 @@ class LightningDamageConsumable(Consumable):
                     closest_distance = distance
 
         if target:
+
+            target.fighter.take_damage(self.damage)
+
+            play_music.init()
+            play_music.music.load("music/zap.wav")
+            play_music.music.set_volume(0.1)
+            play_music.music.play()
+
             self.engine.message_log.add_message(
                 f"A lighting bolt strikes the {target.name} with a loud thunder, for {self.damage} damage!"
             )
-            target.fighter.take_damage(self.damage)
             self.consume()
         else:
             raise Impossible("No enemy is close enough to strike.")
@@ -140,6 +157,12 @@ class FireballDamageConsumable(Consumable):
         targets_hit = False
         for actor in self.engine.game_map.actors:
             if actor.distance(*target_xy) <= self.radius:
+
+                play_music.init()
+                play_music.music.load("music/boom.wav")
+                play_music.music.set_volume(0.1)
+                play_music.music.play()
+
                 self.engine.message_log.add_message(
                     f"{actor.name} is engulfed in flames by the explosion, taking {self.damage} damage"
                 )
@@ -147,4 +170,5 @@ class FireballDamageConsumable(Consumable):
                 targets_hit = True
         if not targets_hit:
             raise Impossible("There is no target in this area")
+
         self.consume()

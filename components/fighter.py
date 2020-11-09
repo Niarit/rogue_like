@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import pygame.mixer as play_music
 from components.base_component import BaseComponent
 from render_order import RenderOrder
 import color
@@ -18,6 +19,7 @@ class Fighter(BaseComponent):
         self._hp = hp
         self.base_defense = base_defense
         self.base_power = base_power
+        play_music.init()
 
     @property
     def hp(self) -> int:
@@ -56,6 +58,9 @@ class Fighter(BaseComponent):
             death_message = "You are screwed!"
             death_message_color = color.player_die
         else:
+            play_music.music.load("music/death.wav")
+            play_music.music.set_volume(0.1)
+            play_music.music.play()
             death_message = f"{self.parent.name} is dead!"
             death_message_color = color.enemy_die
 

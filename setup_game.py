@@ -32,7 +32,6 @@ class HowToPlay(input_handler.BaseEventHandler):
 
         menu_width = console.width // 4
 
-
         for i, text in enumerate(
                 ["UP ARROW........move up",
                  "\n",
