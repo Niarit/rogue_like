@@ -266,7 +266,7 @@ class AskUserEventHandler(EventHandler):
     """Handles user input for actions which require special input."""
 
     def ev_keydown(self, event: tcod.event.KeyDown) -> Optional[ActionOrHandler]:
-        """By default eny kex exits this input handler."""
+        """By default eny key exits this input handler."""
         if event.sym in {
             tcod.event.K_LSHIFT,
             tcod.event.K_RSHIFT,
