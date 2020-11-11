@@ -8,6 +8,7 @@ import traceback
 from typing import Optional
 
 import tcod
+import pygame.mixer as play_music
 
 import color
 from engine import Engine
@@ -17,6 +18,95 @@ from game_map import GameWorld
 
 # Load the background image and remove the alpha channel.
 background_image = tcod.image.load("menu_background.png")[:, :, :3]
+
+
+class Boo(input_handler.BaseEventHandler):
+    def on_render(self, console: tcod.Console) -> None:
+
+        play_music.init()
+        play_music.music.load("music/credits.wav")
+        play_music.music.set_volume(0.2)
+        play_music.music.play()
+
+        console.print(
+            console.width // 2,
+            console.height // 2 - 10,
+            "ENJOY!",
+            fg=color.menu_title,
+            alignment=tcod.CENTER,
+        )
+
+        menu_width = console.width // 4
+
+        for i, text in enumerate(
+                ["      $  @  &",
+                 "\n",
+                 "Press [ESCAPE] if you want to go back to the main menu",
+                 "\n",
+                 "Written by: Niarit"]
+        ):
+            console.print(
+                console.width // 2,
+                console.height // 2 - 2 + i,
+                text.ljust(menu_width),
+                fg=color.menu_text,
+                bg=color.black,
+                alignment=tcod.CENTER,
+                bg_blend=tcod.BKGND_ALPHA(64),
+            )
+
+    def ev_keydown(
+            self, event: tcod.event.KeyDown
+    ) -> Optional[input_handler.BaseEventHandler]:
+        if event.sym in (tcod.event.K_q, tcod.event.K_ESCAPE):
+            play_music.music.stop()
+            return MainMenu()
+        return None
+
+
+class SecretHandler(input_handler.BaseEventHandler):
+    def on_render(self, console: tcod.Console) -> None:
+
+        console.print(
+            console.width // 2,
+            console.height // 2 - 10,
+            "SECRET",
+            fg=color.menu_title,
+            alignment=tcod.CENTER,
+        )
+
+        menu_width = console.width // 4
+
+        for i, text in enumerate(
+                ["Hey, you found your first secret in this game! Good job!",
+                 "\n",
+                 "There will be a lot other secrets to find in this game,",
+                 "(I promise I will implement them sometime) but for now that's all I can give.",
+                 "\n",
+                 "As a reward for finding this secret I wrote a song just for you!",
+                 "Press [P] to check it out!",
+                 "To go back to the main menu press [ESCAPE]",
+                 "\n",
+                 "Your friend: Nia"]
+        ):
+            console.print(
+                console.width // 2,
+                console.height // 2 - 2 + i,
+                text.ljust(menu_width),
+                fg=color.menu_text,
+                bg=color.black,
+                alignment=tcod.CENTER,
+                bg_blend=tcod.BKGND_ALPHA(64),
+            )
+
+    def ev_keydown(
+            self, event: tcod.event.KeyDown
+    ) -> Optional[input_handler.BaseEventHandler]:
+        if event.sym == tcod.event.K_p:
+            return Boo()
+        elif event.sym in (tcod.event.K_q, tcod.event.K_ESCAPE):
+            return MainMenu()
+        return None
 
 
 class HowToPlay(input_handler.BaseEventHandler):
@@ -178,5 +268,7 @@ class MainMenu(input_handler.BaseEventHandler):
             return input_handler.MainGameEventHandler(new_game())
         elif event.sym == tcod.event.K_h:
             return HowToPlay()
+        elif event.sym == tcod.event.K_s:
+            return SecretHandler()
 
         return None
