@@ -12,8 +12,8 @@ graphic_dt = np.dtype(
 
 tile_dt = np.dtype(
     [
-        ("walkable", np.bool),  # a parameter describing that the tile can be walked on or not, represented by a boolean
-        ("transparent", np.bool),  # this parameter describing if the tile blocks the FOV or not, boolean value
+        ("walkable", np.bool_),  # a parameter describing that the tile can be walked on or not, represented by a boolean
+        ("transparent", np.bool_),  # this parameter describing if the tile blocks the FOV or not, boolean value
         ("dark", graphic_dt),  # the character we want to print, it is of type graphic_dt which holds it's specific data
         ("light", graphic_dt)  # Graphics for a tile which in FOV
     ]
